@@ -1,0 +1,59 @@
+.lab-guide {
+  margin-bottom: 18px;
+  padding: 16px 20px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  font-size: 14px;
+}
+
+.lab-guide-current {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.lab-guide p {
+  margin: 6px 0;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.lab-guide-current .button {
+  flex-shrink: 0;
+}
+
+.lab-guide summary {
+  margin-top: 12px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.lab-guide summary:focus-visible {
+  outline: 2px solid var(--navy);
+  outline-offset: 4px;
+}
+
+.lab-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin: 16px 0;
+}
+
+.lab-guide .lab-guide-tip {
+  margin-top: 12px;
+}
+
+@media (max-width: 760px) {
+  .lab-guide-current {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .lab-guide-grid {
+    grid-template-columns: 1fr;
+  }
+}

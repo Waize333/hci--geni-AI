@@ -1,6 +1,19 @@
-# HCI Project
+# Meridian · HCI Navigation Lab
 
-# Emotion-Contingent Navigation instrument
+An enhanced version of [VoidPsyker/HCI-Project](https://github.com/VoidPsyker/HCI-Project), maintained in [Waize333/hci--geni-AI](https://github.com/Waize333/hci--geni-AI). The original Git history is retained for attribution.
+
+## Improvements in this version
+
+- Responsive homepage with interactive previews and direct links to all six menu layouts.
+- Clear separation between an open demo lab and researcher-issued participant study links.
+- Plain-language study flow, optional-camera guidance, and accurate short-pilot timing.
+- Menu-specific interaction tips, a layout comparison, and a restart control in the lab.
+- Saved-session resume links exclude completed and aborted sessions and handle malformed storage.
+- Regression coverage for menu links, preview restart, and saved-session handling.
+
+See [the improvements guide](docs/improvements.md) for scope and verification commands.
+
+## Emotion-Contingent Navigation instrument
 
 Pilot instrument for the fictional watch store Meridian Timepieces: six experiment menus over
 one 72-product taxonomy, four mild emotion inductions with check-ins, scored finding tasks,
@@ -12,7 +25,7 @@ No checkout or accounts.
 Local (Node 20+):
 
 ```text
-npm install && npm run dev
+npm ci && npm run dev
 ```
 
 App: http://127.0.0.1:5173 · Menus: /lab · Researcher console: /admin. The API runs on 8787.

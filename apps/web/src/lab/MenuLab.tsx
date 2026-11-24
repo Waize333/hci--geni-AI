@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { MENU_IDS, NODE_BY_ID, type ColourMapping, type MenuId, type TaxonomyNode } from "@meridian/taxonomy";
+import { MENU_IDS, type ColourMapping, type MenuId, type TaxonomyNode } from "@meridian/taxonomy";
 import type { StateLabel } from "@meridian/scoring";
 import { useDialogFocus } from "../components/useDialogFocus";
 import { MENU_NAMES, ProductDetail } from "../components/MenuChrome";
@@ -9,8 +9,17 @@ import { MenuC } from "../menus/MenuC";
 import { MenuD } from "../menus/MenuD";
 import { MenuE } from "../menus/MenuE";
 import { MenuF } from "../menus/MenuF";
+import "./menu-lab.css";
 
 const MENUS = { A: MenuA, B: MenuB, C: MenuC, D: MenuD, E: MenuE, F: MenuF };
+const MENU_HELP: Record<MenuId, string> = {
+  A: "Open a department in the top bar, choose a collection, then select a watch.",
+  B: "Choose a department and collection in the sidebar, then select a watch in the main panel.",
+  C: "Open a department to see its three collections together, then select any watch directly.",
+  D: "Choose a department tile, then a collection tile, then a watch. The tiles reorganise at each level.",
+  E: "Choose a department card, a collection card, and a watch card. Use the Back card to move up a level.",
+  F: "Choose a department around the hub, then a collection and a watch. Use the central Back control to move inward."
+};
 const STAGE_WIDTH = 1800;
 const STAGE_HEIGHT = 720;
 
@@ -37,11 +46,15 @@ const MAPPINGS: Array<{ id: string; label: string; value: ColourMapping }> = [
 ];
 
 export function MenuLab() {
-  const [menuId, setMenuId] = useState<MenuId>("A");
+  const [menuId, setMenuId] = useState<MenuId>(() => {
+    const requested = new URLSearchParams(window.location.search).get("menu");
+    return MENU_IDS.find((id) => id === requested) ?? "A";
+  });
   const [stateLabel, setStateLabel] = useState<StateLabel>("mixed");
   const [mappingId, setMappingId] = useState("default");
   const [leaf, setLeaf] = useState<TaxonomyNode | null>(null);
   const [events, setEvents] = useState<string[]>([]);
+  const [previewVersion, setPreviewVersion] = useState(0);
   const mapping = useMemo(() => MAPPINGS.find((item) => item.id === mappingId)?.value ?? MAPPINGS[0]!.value, [mappingId]);
   const Menu = MENUS[menuId];
   const { viewportRef, scale } = useLabStageScale();
@@ -100,6 +113,34 @@ export function MenuLab() {
           </a>
         </div>
       </header>
+      <section className="lab-guide" aria-label="Menu guide">
+        <div className="lab-guide-current">
+          <div>
+            <strong>{menuId} · {MENU_NAMES[menuId]}</strong>
+            <p>{MENU_HELP[menuId]}</p>
+          </div>
+          <button type="button" className="button secondary" onClick={() => {
+            setLeaf(null);
+            setEvents([]);
+            setPreviewVersion((current) => current + 1);
+          }}>
+            Restart preview
+          </button>
+        </div>
+        <details>
+          <summary>Compare all six layouts & interaction tips</summary>
+          <p className="lab-guide-tip">Click or use Tab to focus a choice, then Enter to select it. Escape closes product details. Restart preview returns the current layout to its first level and clears the local event history.</p>
+          <div className="lab-guide-grid">
+            {MENU_IDS.map((id) => (
+              <div key={id}>
+                <strong>{id} · {MENU_NAMES[id]}</strong>
+                <p>{MENU_HELP[id]}</p>
+              </div>
+            ))}
+          </div>
+          <p className="lab-guide-tip">State context is a preview label; it does not automatically switch layouts. Colour mapping changes the department colours. These controls do not create a study session.</p>
+        </details>
+      </section>
       <div className="stage-viewport lab-stage-viewport" ref={viewportRef}>
         <div className="stage lab-stage" style={{ transform: `translate(-50%, -50%) scale(${scale})` }}>
           <div className="lab-canvas">
@@ -107,6 +148,7 @@ export function MenuLab() {
               Menu {menuId} · {MENU_NAMES[menuId]} · {stateLabel}
             </div>
             <Menu
+              key={`${menuId}-${previewVersion}`}
               menuId={menuId}
               disabled={Boolean(leaf)}
               colourMapping={mapping}
